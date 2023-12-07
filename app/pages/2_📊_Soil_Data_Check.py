@@ -1,13 +1,10 @@
 import streamlit as st
+from dataframe import *
 
-st.set_page_config(page_title="DataFrame Demo", page_icon="📊")
+st.set_page_config(page_title="Soil Data Check", page_icon="📊")
 
-st.markdown("# DataFrame Demo")
-st.sidebar.header("DataFrame Demo")
-st.write(
-    """This demo shows how to use `st.write` to visualize Pandas DataFrames.
-(Data courtesy of the [UN Data Explorer](http://data.un.org/Explorer.aspx).)"""
-)
+st.markdown("# Soil Data Check")
+# st.sidebar.header("DataFrame Demo")
 
 st.subheader('Check your own values!')
 st.write('We trained our Machine Learning model so that you can check the biodiversity of your soil based on your own chemical measurements. Just insert your values below and we\'ll see what your soil is made of and how you could possibly improve it\'s conditions.')
