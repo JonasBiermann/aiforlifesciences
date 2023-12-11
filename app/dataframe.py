@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-df = pd.read_csv('/workspaces/aiforlifesciences/app/LUCAS SOIL 2018.csv')
+df = pd.read_csv('artifacts/LUCAS SOIL 2018.csv')
 df['CaCO3'] = df['CaCO3'].replace("<  LOD",-1).astype(float)
 df['OC'] = df['OC'].replace("< LOD",-1).replace("<0.0",0).astype(float)
 
