@@ -5,10 +5,10 @@ import pathlib
 
 
 code_dir = pathlib.Path(__file__).parent.resolve()
-files_location = code_dir / "artifacts" / "lucas_soil_data.csv"
-files_location = files_location.resolve()
+file_location = code_dir / "artifacts" / "lucas_soil_data.csv"
+file_location = file_location.resolve()
 
-df1 = pd.read_csv(files_location)
+df1 = pd.read_csv(file_location)
 df2 = pd.read_csv('Shannon.csv')
 df = pd.merge(df1, df2, on='POINTID', how='outer', suffixes=('', '_y'))
 df.drop(df.filter(regex='_y$').columns, axis=1, inplace=True)
