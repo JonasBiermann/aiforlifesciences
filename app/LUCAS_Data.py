@@ -46,11 +46,11 @@ df_filter = df[df['category'] == category]
 if 'All' not in selected_countries:
     df_map = df_filter[(df_filter['COUNTRY'].isin(selected_countries))]
 
-df_map
 df_length = len(df_map)
 # df_map.shape
 if df_length > 0:
     st.map(df_map, latitude='TH_LAT', longitude="TH_LONG", use_container_width=True, color='color')
+    st.write('The map visually represents soil samples, allowing users to filter by both land use and location parameters. The coloration of the data points on the map corresponds to the biodiversity level of each soil sample. Higher biodiversity is depicted in shades of green, creating a spectrum where the darkest green represents the highest biodiversity. Conversely, lower biodiversity is represented by shades of red, with the deepest red indicating the lowest biodiversity. This color-coded scheme enables users to quickly identify and analyze the biodiversity variations across different soil samples, making it an intuitive and informative visualization tool for assessing ecological richness in specific land use and location contexts.')
 else:
     if selected_countries and category:
         st.warning('The configuration you selected yielded no results. Choose a different country or land usage category to continue!', icon="⚠️")
