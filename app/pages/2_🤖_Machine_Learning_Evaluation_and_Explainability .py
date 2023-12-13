@@ -23,7 +23,7 @@ from helper.visualization import (
 
 shap.initjs()
 
-st.set_page_config(page_title="Predicting Soil Biodiversity", page_icon="✨")
+st.set_page_config(page_title="Machine Learning and Explainability", page_icon="🤖", layout='wide')
 
 st.markdown("# Predicting Soil Biodiversity with Machine Learning")
 
