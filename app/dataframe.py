@@ -1,7 +1,9 @@
 import pandas as pd
 import matplotlib as plt
 import matplotlib.colors as mcolors
+import os
 
+print(os.listdir())
 df1 = pd.read_csv('artifacts/lucas_soil_2018.csv')
 df2 = pd.read_csv('artifacts/Shannon.csv')
 df = pd.merge(df1, df2, on='POINTID', how='outer', suffixes=('', '_y'))
