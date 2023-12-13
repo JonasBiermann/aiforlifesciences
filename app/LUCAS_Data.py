@@ -22,9 +22,11 @@ countries = [
 # and then being able maybe to give a summary which types of land have the best/worst biodiversity
 
 land_use = [
-    'Agriculture',
-    'Industrial',
-    'Urban'
+    'Natural and Semi-natural Areas',
+    'Infrastructure and Utilities',
+    'Industrial and Commercial Areas',
+    'Residential and Abandoned Areas',
+    'Services and Miscellaneous',
 ]
 
 col1, col2 = st.columns([3, 2])
@@ -33,12 +35,22 @@ with col1:
     selected_countries = st.multiselect('', countries)
 with col2:
     st.subheader('Select Land Use')
-    use = st.selectbox('', land_use)
+    category = st.selectbox('', land_use)
+
 if "All" in selected_countries:
     selected_countries = countries[1:] # selected_options keeps track of which countries are selected
 
-df_map = df
-if 'All' not in selected_countries:
-    df_map = df_map[(df_map['COUNTRY'].isin(selected_countries))]
+st.write(category = list(df['category'].unique())[0])
+df_filter = df[df['category'] == category]
 
-st.map(df_map, latitude='TH_LAT', longitude="TH_LONG", use_container_width=True)
+if 'All' not in selected_countries:
+    df_map = df_filter[(df_filter['COUNTRY'].isin(selected_countries))]
+
+df_map
+df_length = len(df_map)
+# df_map.shape
+if df_length > 0:
+    st.map(df_map, latitude='TH_LAT', longitude="TH_LONG", use_container_width=True, color='color')
+else:
+    if selected_countries and category:
+        st.warning('The configuration you selected yielded no results. Choose a different country or land usage category to continue!', icon="⚠️")
