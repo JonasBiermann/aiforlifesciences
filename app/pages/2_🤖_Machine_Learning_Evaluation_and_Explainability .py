@@ -14,11 +14,12 @@ import numpy as np
 
 from helper.visualization import (
     beeswarm_plot,
-    prediction_distribution_plot, 
-    confusion_matrix_plot,
     threshold_performance_plot,
     shap_pdp_plot,
-    roc_auc_plot)
+    roc_auc_plot,
+    total_error_plot,
+    error_per_fold_plot,
+    residual_per_feature_plot)
 
 shap.initjs()
 
@@ -36,8 +37,6 @@ with st.expander('Learn More'):
     st.subheader("Feature Exploration")
     st.write("We meticulously explored the relationships between soil biodiversity and the selected features. pH levels, nutrient content (N, P, K), organic carbon, and electrical conductivity were identified as critical factors influencing soil biodiversity.")
 
-    st.subheader("SHAP Algorithm")
-    st.write("To unravel the intricate connections between features and biodiversity, we employed the SHAP algorithm. SHAP values offer insightful explanations for individual predictions, shedding light on the contribution of each feature to the model's output. This interpretability is crucial for understanding the model's decision-making process.")
 
     st.subheader("Classification")
     st.write("Our machine learning model employs a classification approach to predict soil biodiversity. By leveraging patterns within the LUCAS dataset, the model has learned to categorize soil samples into distinct biodiversity classes based on the specified features.")
@@ -48,49 +47,81 @@ with st.expander('Learn More'):
     st.subheader("Results and Implications")
     st.write("The resulting model provides a reliable tool for predicting soil biodiversity, offering valuable insights for land management and conservation efforts. By understanding the influence of pH, nutrient levels, and other factors, our model contributes to a deeper understanding of soil ecosystems and supports informed decision-making in agriculture and environmental science. You can try it out yourself on the page Soil Data Check!")
 
+
 model = cb.CatBoostRegressor(loss_function='RMSE')
 model.load_model("artifacts/CatBoostShannon.cb")
 explainer = shap.TreeExplainer( # I make a mistake here, this should be loaded instead of calculate on the fly like this
     model
 )
+shap_values = joblib.load("artifacts/shap_valuesCatBoostShannon.jb")
+test_df = pd.read_csv("artifacts/model_performance.csv")
+
 list_X = ['pH_CaCl2','pH_H2O','CaCO3','EC','OC','P','N','K','LC0_Desc','LC1_Desc','LU1_Desc']
 list_X_cat = ['LC0_Desc','LC1_Desc','LU1_Desc']
 list_X_num = [x for x in list_X if x not in list_X_cat]
-with st.expander("Input your data") : 
-    with st.form('Prediction'):
-        input_data = {}
+df_shap = pd.DataFrame(shap_values.values,columns=list_X)
+df_shap.reset_index(inplace=True)
 
-        cols_numeric= st.columns(len(list_X_num))
+df_raw = pd.DataFrame(shap_values.data,columns=list_X)
+with st.expander('Model Performance Evaluation'):
+    st.header("Model Performance")
 
-        def create_input_field(column, label):
-            val = column.number_input(label, min_value=min(df[label]), max_value=max(df[label]), value=df[label].mean())
-            return val
+    kpi1, kpi2,kpi3,kpi4 = st.columns(4)
+    from sklearn.metrics import mean_squared_error,mean_absolute_error,r2_score,mean_absolute_percentage_error
+    num_kpi1 = mean_squared_error(test_df['target'],test_df['pred'],squared=False)
+    num_kpi2 = mean_absolute_error(test_df['target'],test_df['pred'])
+    num_kpi3 = r2_score(test_df['target'],test_df['pred'])
+    num_kpi4 = mean_absolute_percentage_error(test_df['target'],test_df['pred'])
 
-        for col in zip(cols_numeric,list_X_num):
-            val = create_input_field(col[0], col[1])
-            input_data[col[1]] = round(val,2)
+    kpi1.metric("RMSE",str(round(num_kpi1,3)))
+    kpi2.metric("MAE",str(round(num_kpi2,3)))
+    kpi3.metric("R-Square",str(round(num_kpi3,3)))
+    kpi4.metric("MAPE",str(round(num_kpi4*100,2))+"%")
+
+    with st.container(border=True):
+        row1left, row1right = st.columns(2)
+
+        row1left.subheader("Distribution Error plot")
+        row1left.write("From the 10 fold validation, what is the distribution of the error ? ")
+        row1left.write("")
+        fig_total_error = total_error_plot(test_df)
+        row1left.pyplot(fig_total_error)
+
+        row1right.subheader("Fold-wise error")
+        row1right.write("What is the distribution of the error in the 10 fold cross validation ? ")
+        fig_error_per_fold = error_per_fold_plot(test_df)
+        row1right.pyplot(fig_error_per_fold)
+
+    with st.container(border=True):
+        st.subheader("Error residuals across different predictors")
+        st.write("Help to identify any biases or heteroskedasticity in the model")
+        row2left, row2right = st.columns(2)
+        tabs = st.tabs(list_X)
+        for tab,feature_name in zip(tabs,list_X) :
+            fig_residual = residual_per_feature_plot(test_df,feature_name,list_X_cat)
+            tab.pyplot(fig_residual)
+
+with st.expander('Model Analysis - SHAP'):
+    st.header("SHAP Analysis")
+    st.image("artifacts/shap_logo.png")
+    st.subheader("Global Analysis")
+    st.write("""To unravel the intricate connections between features and biodiversity, we employed the SHAP algorithm. 
+    SHAP values offer insightful explanations for individual predictions, shedding light on the contribution of each feature to the model's output. 
+    This interpretability is crucial for understanding the model's decision-making process.""")
+
+    
+    with st.container(border=True):
+        fig_beeswarm,_ = beeswarm_plot(df_raw,df_shap,list_X_num,list_X_cat)
+        st.pyplot(fig_beeswarm)
+
+    st.subheader("Partial Dependence Plot")
+    tabs = st.tabs(shap_values.feature_names)
+    for tab,feature_name in zip(tabs,shap_values.feature_names) :
+        fig_pdp = shap_pdp_plot(shap_values,feature_name,list_X_cat)
+        tab.pyplot(fig_pdp)
 
 
-        cols_categorical= st.columns(len(list_X_cat))
-        for col,label in zip(cols_categorical,list_X_cat):
-            val =  st.selectbox(
-                label,
-                df[label].unique(),
-                    placeholder=df[label].iloc[0],
-                    )
-            input_data[label] = val
         
-        clicked = st.form_submit_button('Predict')
-
-    if clicked:
-        input_data = pd.Series(input_data)
-        result = model.predict(input_data)
-        st.metric('The Shannon Index of this soil sample predicted to be',round(result,5))
-        single_shap = explainer(input_data.to_frame(0).transpose())
-   
-        # Generate a force plot without specifying link='logit'
-        fig = shap.plots.force(single_shap[0],show=False)
-        st.pyplot(fig.matplotlib(figsize=[15,6],show=False,text_rotation=0))
 
 
     

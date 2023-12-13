@@ -30,7 +30,7 @@ def beeswarm_plot(df,df_shap,list_X_num,list_X_cat) :
                 y='variable',
                 hue='Feature Value',
                 alpha = 0.8,
-                size=1,
+                size=5,
                 palette= 'coolwarm',
                 legend = False,
                 jitter=0.3,ax=ax[0])
@@ -136,9 +136,35 @@ def shap_pdp_plot(shap_values,col,list_X_cat):
         sns.stripplot(y=val_data,
                         x=val_shap,
                         alpha = 0.9,
-                        size=1.5,
+                        size=5,
                         legend = False,
                         hue=val_data,
                         jitter=0.3,zorder=0,order=category,ax=ax)
         sns.scatterplot(x=value,y=category,marker='|',s=500,c='k',label='Average SHAP',ax=ax)
+    return fig
+
+def total_error_plot(test_df):
+    fig = sns.displot(test_df['error'],kde=True)
+    return fig
+
+def error_per_fold_plot(test_df):
+    fig, ax = plt.subplots(figsize=(4,4.3))
+    ax = sns.boxplot(data=test_df,x='fold',y='error')
+    ax.axhline(0,c='red')
+    ax.set_ylim(-2,2)
+    ax.set_xlabel("Cross Validation Fold")
+    ax.set_ylabel("Residuals")
+    ax.set_title("Residuals in 10 fold cross validation")
+    return fig
+
+def residual_per_feature_plot(test_df,col,list_X_cat):
+    fig, ax = plt.subplots()
+    if col not in list_X_cat : 
+        ax = sns.scatterplot(test_df,x=col,y='error')
+        ax.set_ylim(-2,2)
+        ax.axhline(0,c='red')
+    else :
+        ax = sns.stripplot(test_df,y=col,x='error')
+        ax.set_xlim(-2,2)
+        ax.axvline(0,c='red')
     return fig
