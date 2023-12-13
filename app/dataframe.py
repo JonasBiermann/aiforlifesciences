@@ -6,9 +6,9 @@ import os
 print('----------------------------------')
 print(os.listdir())
 print('----------------------------------')
-df1 = pd.read_csv('artifacts/lucas_soil_2018.csv')
+df1 = pd.read_csv('jonasbiermann/aiforlifesciences/main/app/artifacts/lucas_soil_2018.csv')
 
-df2 = pd.read_csv('artifacts/Shannon.csv')
+df2 = pd.read_csv('jonasbiermann/aiforlifesciences/main/app/artifacts/Shannon.csv')
 df = pd.merge(df1, df2, on='POINTID', how='outer', suffixes=('', '_y'))
 df.drop(df.filter(regex='_y$').columns, axis=1, inplace=True)
 

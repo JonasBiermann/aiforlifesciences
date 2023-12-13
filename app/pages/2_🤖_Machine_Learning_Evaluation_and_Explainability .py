@@ -53,8 +53,8 @@ model.load_model("artifacts/CatBoostShannon.cb")
 explainer = shap.TreeExplainer( # I make a mistake here, this should be loaded instead of calculate on the fly like this
     model
 )
-shap_values = joblib.load("artifacts/shap_valuesCatBoostShannon.jb")
-test_df = pd.read_csv("artifacts/model_performance.csv")
+shap_values = joblib.load("jonasbiermann/aiforlifesciences/main/app/artifacts/shap_valuesCatBoostShannon.jb")
+test_df = pd.read_csv("jonasbiermann/aiforlifesciences/main/app/artifacts/model_performance.csv")
 
 list_X = ['pH_CaCl2','pH_H2O','CaCO3','EC','OC','P','N','K','LC0_Desc','LC1_Desc','LU1_Desc']
 list_X_cat = ['LC0_Desc','LC1_Desc','LU1_Desc']
