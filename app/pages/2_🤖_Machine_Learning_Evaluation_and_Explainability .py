@@ -111,7 +111,7 @@ with st.expander('Model Performance Evaluation'):
 
 with st.expander('Model Analysis - SHAP'):
     st.header("SHAP Analysis")
-    image_path = os.path.join(script_dir, "..", "artifacts", "shap_logo.png")
+    image_path = path+'/../artifacts/shap_logo.png'
     st.image(image_path)
     st.subheader("Global Analysis")
     st.write("""To unravel the intricate connections between features and biodiversity, we employed the SHAP algorithm. 
