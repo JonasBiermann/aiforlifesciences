@@ -22,6 +22,8 @@ from helper.visualization import (
 
 shap.initjs()
 
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
 st.set_page_config(page_title="Predicting Soil Biodiversity", page_icon="✨", layout='wide')
 
 st.markdown("# Predicting Soil Biodiversity with Machine Learning")
@@ -48,8 +50,10 @@ with st.expander('Learn More'):
     st.subheader("Results and Implications")
     st.write("The resulting model provides a reliable tool for predicting soil biodiversity, offering valuable insights for land management and conservation efforts. By understanding the influence of pH, nutrient levels, and other factors, our model contributes to a deeper understanding of soil ecosystems and supports informed decision-making in agriculture and environmental science. You can try it out yourself on the page Soil Data Check!")
 
+catboost_model_path = os.path.join(script_dir, "..", "artifacts", "CatBoostShannon.cb")
+
 model = cb.CatBoostRegressor(loss_function='RMSE')
-model.load_model("artifacts/CatBoostShannon.cb")
+model.load_model(catboost_model_path)
 explainer = shap.TreeExplainer( # I make a mistake here, this should be loaded instead of calculate on the fly like this
     model
 )

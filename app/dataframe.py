@@ -2,14 +2,15 @@ import pandas as pd
 import matplotlib as plt
 import matplotlib.colors as mcolors
 import pathlib
+import os
 
 
 code_dir = pathlib.Path(__file__).parent.resolve()
-file_location = code_dir / "artifacts" / "lucas_soil_data.csv"
-file_location = file_location.resolve()
+lucas_data = os.path.join("artifacts", "lucas_soil_2018.csv")
+shannon = os.path.join("artifacts", "shannon.csv")
 
-df1 = pd.read_csv(file_location)
-df2 = pd.read_csv('Shannon.csv')
+df1 = pd.read_csv(lucas_data)
+df2 = pd.read_csv(shannon)
 df = pd.merge(df1, df2, on='POINTID', how='outer', suffixes=('', '_y'))
 df.drop(df.filter(regex='_y$').columns, axis=1, inplace=True)
 

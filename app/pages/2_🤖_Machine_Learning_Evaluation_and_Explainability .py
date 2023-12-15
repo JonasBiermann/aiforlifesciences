@@ -23,6 +23,8 @@ from helper.visualization import (
 
 shap.initjs()
 
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
 st.set_page_config(page_title="Machine Learning and Explainability", page_icon="🤖", layout='wide')
 
 st.markdown("# Predicting Soil Biodiversity with Machine Learning")
@@ -49,12 +51,17 @@ with st.expander('Learn More'):
 
 
 model = cb.CatBoostRegressor(loss_function='RMSE')
-model.load_model("artifacts/CatBoostShannon.cb")
+catboost_model_path = os.path.join(script_dir, "..", "artifacts", "CatBoostShannon.cb")
+
+model.load_model(catboost_model_path)
 explainer = shap.TreeExplainer( # I make a mistake here, this should be loaded instead of calculate on the fly like this
     model
 )
-shap_values = joblib.load("artifacts/shap_valuesCatBoostShannon.jb")
-test_df = pd.read_csv("artifacts/model_performance.csv")
+
+shap_values_path = os.path.join(script_dir, "..", "artifacts", "shap_valuesCatBoostShannon.jb")
+model_performance_path = os.path.join(script_dir, "..", "artifacts", "model_performance.csv")
+shap_values = joblib.load(shap_values_path)
+test_df = pd.read_csv(model_performance_path)
 
 list_X = ['pH_CaCl2','pH_H2O','CaCO3','EC','OC','P','N','K','LC0_Desc','LC1_Desc','LU1_Desc']
 list_X_cat = ['LC0_Desc','LC1_Desc','LU1_Desc']
@@ -103,7 +110,8 @@ with st.expander('Model Performance Evaluation'):
 
 with st.expander('Model Analysis - SHAP'):
     st.header("SHAP Analysis")
-    st.image("artifacts/shap_logo.png")
+    image_path = os.path.join(script_dir, "..", "artifacts", "shap_logo.png")
+    st.image(image_path)
     st.subheader("Global Analysis")
     st.write("""To unravel the intricate connections between features and biodiversity, we employed the SHAP algorithm. 
     SHAP values offer insightful explanations for individual predictions, shedding light on the contribution of each feature to the model's output. 
