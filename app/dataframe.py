@@ -9,8 +9,8 @@ code_dir = pathlib.Path(__file__).parent.resolve()
 lucas_data = os.path.join("artifacts", "lucas_soil_2018.csv")
 shannon = os.path.join("artifacts", "shannon.csv")
 
-lucas_data = "artifacts/lucas_soil_2018.csv"
-lucas_data_path = os.path.abspath(lucas_data)
+path = os.path.dirname(__file__)
+lucas_data_path = path+'/artifacts/lucas_soil_2018.csv'
 
 df1 = pd.read_csv(lucas_data_path)
 df2 = pd.read_csv(shannon)
