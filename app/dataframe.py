@@ -4,13 +4,9 @@ import matplotlib.colors as mcolors
 import pathlib
 import os
 
-
-code_dir = pathlib.Path(__file__).parent.resolve()
-lucas_data = os.path.join("artifacts", "lucas_soil_2018.csv")
-shannon = os.path.join("artifacts", "shannon.csv")
-
 path = os.path.dirname(__file__)
 lucas_data_path = path+'/artifacts/lucas_soil_2018.csv'
+shannon = path+'/artifacts/shannon.csv'
 
 df1 = pd.read_csv(lucas_data_path)
 df2 = pd.read_csv(shannon)

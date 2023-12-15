@@ -23,7 +23,7 @@ from helper.visualization import (
 
 shap.initjs()
 
-script_dir = os.path.dirname(os.path.abspath(__file__))
+path = os.path.dirname(__file__)
 
 st.set_page_config(page_title="Machine Learning and Explainability", page_icon="🤖", layout='wide')
 
@@ -51,15 +51,16 @@ with st.expander('Learn More'):
 
 
 model = cb.CatBoostRegressor(loss_function='RMSE')
-catboost_model_path = os.path.join(script_dir, "..", "artifacts", "CatBoostShannon.cb")
+catboost_model_path = path+'/../artifacts/CatBoostShannon.cb'
 
 model.load_model(catboost_model_path)
 explainer = shap.TreeExplainer( # I make a mistake here, this should be loaded instead of calculate on the fly like this
     model
 )
 
-shap_values_path = os.path.join(script_dir, "..", "artifacts", "shap_valuesCatBoostShannon.jb")
-model_performance_path = os.path.join(script_dir, "..", "artifacts", "model_performance.csv")
+shap_values_path = path+'/../artifacts/shap_valuesCatBoostShannon.jb'
+model_performance_path = path+'/../artifacts/model_performance.csv'
+
 shap_values = joblib.load(shap_values_path)
 test_df = pd.read_csv(model_performance_path)
 
