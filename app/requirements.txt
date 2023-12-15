@@ -6,3 +6,4 @@ shap
 lxml
 streamlit_shap
 joblib
+ipython
