@@ -4,3 +4,5 @@ seaborn
 catboost
 shap
 lxml
+streamlit_shap
+joblib
