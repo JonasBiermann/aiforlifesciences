@@ -3,3 +3,4 @@ streamlit
 seaborn
 catboost
 shap
+lxml
